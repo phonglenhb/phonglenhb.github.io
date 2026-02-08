@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Phong Lê NHB</title>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            background-color: #0d0d0d;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* KHUNG CHỨA ẢNH - CĂN TÂM TUYỆT ĐỐI */
+        .profile-container {
+            margin-top: 50px;
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+
+        /* Vòng hào quang xoay tròn rực rỡ */
+        .glow {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 195px; height: 195px;
+            background: linear-gradient(45deg, #87CEEB, #ff4500, #ffffff);
+            border-radius: 50%;
+            z-index: 1;
+            filter: blur(12px);
+            transform: translate(-50%, -50%) rotate(0deg);
+            animation: rotateGlow 3s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes rotateGlow {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Ảnh đại diện Minecraft - Pháp sư Picsart */
+        .profile-pic {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #1a1a1a;
+            z-index: 2;
+        }
+
+        h1 {
+            margin: 25px 0 5px 0;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #87CEEB;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        /* Cụm nút bấm lanh lợi */
+        .links-group {
+            width: 90%;
+            max-width: 360px;
+        }
+
+        .btn {
+            display: block;
+            background: #1a1a1a;
+            color: white;
+            text-decoration: none;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid #333;
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Hiệu ứng nhấn nút đúng chất Chiến thần */
+        .btn:active {
+            transform: scale(0.95);
+            background: #87CEEB;
+            color: black;
+            box-shadow: 0 0 15px #87CEEB;
+        }
+
+        /* Màu sắc đặc trưng từng mục */
+        .btn-roblox { border-left: 5px solid #ffffff; }
+        .btn-action { border-left: 5px solid #ff4500; }
+        .btn-chill { border-left: 5px solid #4CAF50; }
+        .btn-art { border-left: 5px solid #87CEEB; }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <div class="glow"></div>
+        <img src="https://i.postimg.cc/7hWC8zjg/Picsart-26-02-03-21-57-00-130.png" class="profile-pic" alt="PHONG LÊ NHB">
+    </div>
+
+    <h1>PHONG LÊ NHB</h1>
+    <div class="subtitle">Pháp Sư Picsart | Chiến Thần Game</div>
+
+    <div class="links-group">
+        <a href="#" class="btn btn-roblox">🟥 THẾ GIỚI ROBLOX VN</a>
+        <a href="#" class="btn btn-action">🔫 CHIẾN TRƯỜNG BLOOD STRIKE</a>
+        <a href="#" class="btn btn-chill">🌾 NÔNG TRẠI HAY DAY</a>
+        <a href="#" class="btn btn-art">🎨 KHO ẢNH PICSART & CANVA</a>
+        <a href="#" class="btn">🛠️ STEAM / XBOX / GFN</a>
+    </div>
+
+    <p style="margin-top: 40px; font-size: 10px; color: #333;">Design by Gemini & Ní</p>
+
+</body>
+</html>
