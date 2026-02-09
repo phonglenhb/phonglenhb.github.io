@@ -3,129 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio Phong Lê NHB</title>
+    <title>PhongLenhB Bio & Chat 🌾</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
+        :root {
+            --accent: #7cd342;
+            --glass: rgba(255, 255, 255, 0.05); /* Liquid Glass 5% */
+            --blur: blur(1px); /* Độ nhòe 1px theo ý ní */
+        }
+
+        * { box-sizing: border-box; transition: 0.3s; }
         body {
-            margin: 0; padding: 0;
-            background-color: #0d0d0d;
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            margin: 0; font-family: 'Segoe UI', sans-serif;
+            background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; color: white;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
 
-        /* KHUNG CHỨA ẢNH - CĂN TÂM TUYỆT ĐỐI */
-        .profile-container {
-            margin-top: 50px;
-            position: relative;
-            width: 180px;
-            height: 180px;
-        }
-
-        /* Vòng hào quang xoay tròn rực rỡ */
-        .glow {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 195px; height: 195px;
-            background: linear-gradient(45deg, #87CEEB, #ff4500, #ffffff);
-            border-radius: 50%;
-            z-index: 1;
-            filter: blur(12px);
-            transform: translate(-50%, -50%) rotate(0deg);
-            animation: rotateGlow 3s linear infinite;
-            will-change: transform;
-        }
-
-        @keyframes rotateGlow {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* Ảnh đại diện Minecraft - Pháp sư Picsart */
-        .profile-pic {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #1a1a1a;
-            z-index: 2;
-        }
-
-        h1 {
-            margin: 25px 0 5px 0;
-            font-size: 24px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #87CEEB;
-        }
-
-        .subtitle {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 30px;
-            font-style: italic;
-        }
-
-        /* Cụm nút bấm lanh lợi */
-        .links-group {
-            width: 90%;
-            max-width: 360px;
-        }
-
-        .btn {
-            display: block;
-            background: #1a1a1a;
-            color: white;
-            text-decoration: none;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-radius: 12px;
+        /* KHUNG CHÍNH */
+        .container {
+            width: 90%; max-width: 400px;
+            background: var(--glass); backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             text-align: center;
-            font-weight: bold;
-            border: 1px solid #333;
-            transition: 0.2s;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Hiệu ứng nhấn nút đúng chất Chiến thần */
-        .btn:active {
-            transform: scale(0.95);
-            background: #87CEEB;
-            color: black;
-            box-shadow: 0 0 15px #87CEEB;
-        }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent); margin-bottom: 15px; box-shadow: 0 0 15px var(--accent); }
+        
+        h2 { margin: 10px 0; letter-spacing: 2px; color: var(--accent); }
+        .tagline { font-size: 14px; opacity: 0.8; margin-bottom: 20px; }
 
-        /* Màu sắc đặc trưng từng mục */
-        .btn-roblox { border-left: 5px solid #ffffff; }
-        .btn-action { border-left: 5px solid #ff4500; }
-        .btn-chill { border-left: 5px solid #4CAF50; }
-        .btn-art { border-left: 5px solid #87CEEB; }
+        /* MỤC ROBLOX BÍ MẬT 🤑 */
+        .btn-link {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px; border-radius: 20px; display: flex; align-items: center;
+            gap: 15px; cursor: pointer; margin-bottom: 12px; text-decoration: none; color: white;
+        }
+        .btn-link:hover { background: rgba(0,0,0,0.6); transform: scale(1.03); border-color: var(--accent); box-shadow: 0 0 20px rgba(124, 211, 66, 0.4); }
+
+        /* GIAO DIỆN CHAT ẨN */
+        #chat-section { display: none; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        #chat-logs { height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; margin-bottom: 15px; }
+        .msg { padding: 8px 15px; border-radius: 15px; max-width: 85%; font-size: 14px; }
+        .msg.me { background: var(--accent); color: black; align-self: flex-end; font-weight: bold; }
+        .msg.friend { background: rgba(255,255,255,0.1); align-self: flex-start; }
+        
+        input { width: 100%; padding: 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: white; margin-bottom: 10px; outline: none; }
+        .send-btn { background: var(--accent); color: black; border: none; padding: 10px 20px; border-radius: 15px; font-weight: bold; cursor: pointer; width: 100%; }
+        .send-btn:hover { background: #fff; box-shadow: 0 0 15px #fff; }
+
+        .back-btn { font-size: 12px; color: var(--accent); cursor: pointer; text-decoration: underline; margin-top: 10px; display: inline-block; }
     </style>
 </head>
 <body>
 
-    <div class="profile-container">
-        <div class="glow"></div>
-        <img src="https://i.postimg.cc/7hWC8zjg/Picsart-26-02-03-21-57-00-130.png" class="profile-pic" alt="PHONG LÊ NHB">
+    <div class="container" id="main-ui">
+        <img src="https://via.placeholder.com/100" class="avatar" alt="PhongLenhB">
+        <h2>PHONG LENH B</h2>
+        <p class="tagline">Pháp sư Picsart • Chiến thần Blood Strike 🤑</p>
+
+        <div class="btn-link" onclick="toggleChat()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Roblox_player_icon_with_a_colored_background.svg" width="30">
+            <div style="text-align: left;">
+                <div style="font-weight: bold;">ROBLOX VN</div>
+                <div style="font-size: 11px; opacity: 0.7;">Bấm để nhắn tin Crystal 1px 🤑</div>
+            </div>
+        </div>
+
+        <div class="btn-link">
+            <span>🎮</span>
+            <div style="text-align: left;">
+                <div style="font-weight: bold;">BLOOD STRIKE</div>
+                <div style="font-size: 11px; opacity: 0.7;">Pro Player - ID: PHONGLENHB</div>
+            </div>
+        </div>
+
+        <div id="chat-section">
+            <h4 style="color: var(--accent); margin: 0 0 10px 0;">CRYSTAL CHAT 🌾</h4>
+            <input type="email" id="my-email" placeholder="Email của ní...">
+            <button class="send-btn" style="margin-bottom: 10px;" onclick="register()">ĐĂNG KÝ ONLINE</button>
+            
+            <input type="email" id="friend-email" placeholder="Email bạn bè để kết nối...">
+            <button class="send-btn" style="background: #fff;" onclick="connectFriend()">KẾT NỐI BẠN BÈ</button>
+
+            <div id="chat-logs"></div>
+
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="chat-msg" placeholder="Nhắn gì đó đi ní...">
+                <button class="send-btn" style="width: 80px;" onclick="sendText()">GỬI</button>
+            </div>
+            <span class="back-btn" onclick="toggleChat()">← Quay lại Bio</span>
+        </div>
     </div>
 
-    <h1>PHONG LÊ NHB</h1>
-    <div class="subtitle">Pháp Sư Picsart | Chiến Thần Game</div>
+    <script>
+        let peer, activeConn;
+        const chatLogs = document.getElementById('chat-logs');
 
-    <div class="links-group">
-        <a href="#" class="btn btn-roblox">🟥 THẾ GIỚI ROBLOX VN</a>
-        <a href="#" class="btn btn-action">🔫 CHIẾN TRƯỜNG BLOOD STRIKE</a>
-        <a href="#" class="btn btn-chill">🌾 NÔNG TRẠI HAY DAY</a>
-        <a href="#" class="btn btn-art">🎨 KHO ẢNH PICSART & CANVA</a>
-        <a href="#" class="btn">🛠️ STEAM / XBOX / GFN</a>
-    </div>
+        // Hàm ẩn hiện lanh lợi
+        function toggleChat() {
+            const chatSec = document.getElementById('chat-section');
+            const btns = document.querySelectorAll('.btn-link');
+            const avatar = document.querySelector('.avatar');
+            
+            if(chatSec.style.display === 'block') {
+                chatSec.style.display = 'none';
+                btns.forEach(b => b.style.display = 'flex');
+                avatar.style.display = 'inline-block';
+            } else {
+                chatSec.style.display = 'block';
+                btns.forEach(b => b.style.display = 'none');
+                avatar.style.display = 'none';
+            }
+        }
 
-    <p style="margin-top: 40px; font-size: 10px; color: #333;">Design by Gemini & Ní</p>
+        function register() {
+            const email = document.getElementById('my-email').value.trim();
+            if(!email.includes('@')) return alert("Email sai rồi ní!");
+            const id = email.replace(/[^a-zA-Z0-9]/g, "");
+            
+            peer = new Peer(id, { config: {'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }]} });
+            peer.on('open', () => alert("Ní đã online: " + email));
+            peer.on('connection', conn => { activeConn = conn; setupChat(); });
+        }
 
+        function connectFriend() {
+            const fEmail = document.getElementById('friend-email').value.trim();
+            const fID = fEmail.replace(/[^a-zA-Z0-9]/g, "");
+            activeConn = peer.connect(fID);
+            setupChat();
+            alert("Đang tìm máy bạn ní...");
+        }
+
+        function setupChat() {
+            activeConn.on('data', data => appendMsg(data, 'friend'));
+            activeConn.on('open', () => appendMsg("Hệ thống: Đã kết nối!", "friend"));
+        }
+
+        function sendText() {
+            const t = document.getElementById('chat-msg').value;
+            if(!t || !activeConn) return;
+            activeConn.send(t);
+            appendMsg(t, 'me');
+            document.getElementById('chat-msg').value = '';
+        }
+
+        function appendMsg(txt, type) {
+            const d = document.createElement('div');
+            d.className = `msg ${type}`;
+            d.innerText = txt;
+            chatLogs.appendChild(d);
+            chatLogs.scrollTop = chatLogs.scrollHeight;
+        }
+    </script>
 </body>
 </html>
