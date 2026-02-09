@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Offroad Crystal 🌾</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        :root {
+            --accent: #7cd342;
+            --glass: rgba(255, 255, 255, 0.05); /* Liquid Glass 5% */
+            --blur: blur(1px); /* Độ nhòe siêu mỏng theo ý ní */
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0;
+            /* Nền đồng cỏ xanh mướt */
+            background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            color: white; font-family: 'Segoe UI', sans-serif;
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+        }
+
+        /* KHUNG CRYSTAL GLASS */
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            margin: 10px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        /* VÙNG CHAT */
+        .chat-view { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        
+        .msg { 
+            padding: 10px 16px; border-radius: 18px; max-width: 80%; 
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            font-size: 14px; line-height: 1.4;
+        }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .msg.me { background: var(--accent); color: #000; align-self: flex-end; font-weight: bold; }
+        .msg.friend { background: rgba(0,0,0,0.5); align-self: flex-start; border: 1px solid var(--border); }
+        .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; border: 1px solid var(--border); }
+
+        /* VÙNG ĐIỀU KHIỂN */
+        .ui-panel { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .input-box {
+            width: 100%; padding: 12px 15px; border-radius: 15px; border: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.3); color: white; outline: none; font-size: 14px;
+        }
+        .input-box:focus { border-color: var(--accent); background: rgba(0,0,0,0.4); }
+
+        .row { display: flex; gap: 8px; }
+
+        /* HIỆU ỨNG NÚT BẤM LANH LỢI */
+        .btn {
+            padding: 12px; border-radius: 15px; border: none; font-weight: bold;
+            cursor: pointer; transition: 0.2s; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-main { background: var(--accent); color: #000; flex: 1; }
+        .btn-main:hover { box-shadow: 0 0 15px var(--accent); }
+        .btn-main:active { transform: scale(0.95); }
+
+        .btn-alt { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); }
+        
+        .file-btn { font-size: 20px; padding: 0 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h3 style="text-align: center; color: var(--accent); margin-top: 15px; margin-bottom: 5px; text-shadow: 0 0 10px rgba(124, 211, 66, 0.5);">OFFROAD CRYSTAL 🌾</h3>
+
+    <div class="glass-panel" style="flex: 1;">
+        <div id="chat-logs" class="chat-view">
+            <div class="msg friend">Sẵn sàng! Hãy nhập Email để "lên sóng" lanh lợi nhé.</div>
+        </div>
+    </div>
+
+    <div class="glass-panel">
+        <div class="ui-panel">
+            <div class="row">
+                <input type="email" id="my-email" class="input-box" placeholder="Email của ní...">
+                <button class="btn btn-main" style="width: 100px;" onclick="initPeer()">ĐĂNG KÝ</button>
+            </div>
+
+            <div class="row">
+                <input type="email" id="peer-email" class="input-box" placeholder="Email bạn bè...">
+                <button class="btn btn-alt" onclick="connectPeer()">KẾT NỐI</button>
+            </div>
+
+            <div class="row">
+                <label class="file-btn">🖼️<input type="file" id="file-up" style="display:none;"></label>
+                <input type="text" id="msg-input" class="input-box" placeholder="Nhập tin nhắn, link...">
+                <button class="btn btn-main" onclick="send()">GỬI</button>
+            </div>
+            <div style="font-size: 10px; text-align: center; opacity: 0.5;">BLUR 1PX • LIQUID GLASS 5% • P2P ENCRYPTION</div>
+        </div>
+    </div>
+
+    <script>
+        let peer, conn;
+        const logs = document.getElementById('chat-logs');
+
+        function initPeer() {
+            const email = document.getElementById('my-email').value.trim();
+            if(!email.includes('@')) return alert("Email sai rồi ní ơi!");
+            const id = email.replace(/[^a-zA-Z0-9]/g, "");
+            
+            peer = new Peer(id, { config: {'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }]} });
+            peer.on('open', () => alert("Lanh lợi rồi! ID của ní: " + email));
+            peer.on('connection', c => { conn = c; setupConn(); });
+        }
+
+        function connectPeer() {
+            const fEmail = document.getElementById('peer-email').value.trim();
+            const fId = fEmail.replace(/[^a-zA-Z0-9]/g, "");
+            conn = peer.connect(fId);
+            setupConn();
+            alert("Đang tìm máy bạn ní...");
+        }
+
+        function setupConn() {
+            conn.on('data', data => {
+                if(data.file) {
+                    const blob = new Blob([data.file], {type: data.type});
+                    const url = URL.createObjectURL(blob);
+                    if(data.type.startsWith('image/')) addMsg(`<img src="${url}">`, 'friend', true);
+                    else addMsg(`📥 <a href="${url}" download="${data.name}" style="color:var(--accent);">Tải: ${data.name}</a>`, 'friend', true);
+                } else addMsg(data, 'friend');
+            });
+            conn.on('open', () => addMsg("Hệ thống: Đã kết nối thành công!", "friend"));
+        }
+
+        document.getElementById('file-up').onchange = (e) => {
+            const f = e.target.files[0];
+            if(!f || !conn) return;
+            conn.send({ file: f, name: f.name, type: f.type });
+            addMsg(`📎 File: ${f.name}`, 'me');
+        };
+
+        function send() {
+            const t = document.getElementById('msg-input').value;
+            if(!t || !conn) return;
+            conn.send(t);
+            addMsg(t, 'me');
+            document.getElementById('msg-input').value = '';
+        }
+
+        function addMsg(txt, type, html = false) {
+            const d = document.createElement('div');
+            d.className = `msg ${type}`;
+            if(html) d.innerHTML = txt;
+            else {
+                const urlReg = /(https?:\/\/[^\s]+)/g;
+                d.innerHTML = txt.replace(urlReg, u => `<a href="${u}" target="_blank" style="color:white; font-style:italic;">[Link]</a>`);
+            }
+            logs.appendChild(d);
+            logs.scrollTop = logs.scrollHeight;
+        }
+    </script>
+</body>
+</html>
