@@ -2,132 +2,278 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio Phong Lê NHB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Onet Crystal Pro 2026 💎</title>
     <style>
-        body {
-            margin: 0; padding: 0;
-            background-color: #0d0d0d;
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+        :root { 
+            --accent: #d4ff00; 
+            --tet-red: #ff3e3e;
+            --glass: rgba(0, 0, 0, 0.85);
+            --crystal-border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body { 
+            margin: 0; background: #000 url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932') no-repeat center center fixed;
+            background-size: cover; font-family: -apple-system, sans-serif; color: white;
+            display: flex; flex-direction: column; align-items: center; height: 100dvh; overflow: hidden;
+            transition: 0.8s;
         }
 
-        /* KHUNG CHỨA ẢNH - CĂN TÂM TUYỆT ĐỐI */
-        .profile-container {
-            margin-top: 50px;
-            position: relative;
-            width: 180px;
-            height: 180px;
+        /* KHỞI ĐỘNG */
+        #start-screen {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .btn-start {
+            padding: 20px 50px; background: var(--accent); color: black; border: none;
+            border-radius: 50px; font-weight: 900; font-size: 24px; cursor: pointer;
+            box-shadow: 0 0 30px var(--accent); animation: pulse 1.5s infinite;
         }
 
-        /* Vòng hào quang xoay tròn rực rỡ */
-        .glow {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 195px; height: 195px;
-            background: linear-gradient(45deg, #87CEEB, #ff4500, #ffffff);
-            border-radius: 50%;
-            z-index: 1;
-            filter: blur(12px);
-            transform: translate(-50%, -50%) rotate(0deg);
-            animation: rotateGlow 3s linear infinite;
-            will-change: transform;
-        }
+        /* HEADER & TIMER */
+        .header { width: 100%; padding: 15px 0; background: var(--glass); display: flex; flex-direction: column; align-items: center; border-bottom: 2px solid #f1c40f; }
+        .info-row { width: 90%; display: flex; justify-content: space-around; font-weight: 900; font-size: 18px; color: #f1c40f; margin-bottom: 10px; }
+        .timer-outer { width: 85%; height: 22px; background: #331a00; border: 3px solid #f1c40f; border-radius: 20px; overflow: hidden; }
+        #timer-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff00ff, #00ffff, #00ff00, #ffff00); transition: width 0.5s linear; }
 
-        @keyframes rotateGlow {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
+        /* MENU */
+        .tool-menu { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 95%; margin: 15px 0; }
+        .tool-btn { background: rgba(255,255,255,0.1); border: var(--crystal-border); border-radius: 12px; padding: 12px; color: white; cursor: pointer; font-weight: bold; font-size: 12px; backdrop-filter: blur(5px); }
+        .tool-btn:active { background: var(--accent); color: black; }
 
-        /* Ảnh đại diện Minecraft - Pháp sư Picsart */
-        .profile-pic {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #1a1a1a;
-            z-index: 2;
+        /* BOARD */
+        .board-container { position: relative; margin: auto; padding: 25px; background: rgba(0,0,0,0.3); border-radius: 20px; border: var(--crystal-border); }
+        #game-board { display: grid; grid-template-columns: repeat(12, 42px); gap: 5px; }
+        .tile { 
+            width: 42px; height: 52px; background: rgba(255,255,255,0.05); /* Liquid Glass 5% */
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer;
+            transition: 0.1s;
         }
+        .tile.selected { background: var(--tet-red); border-color: white; box-shadow: 0 0 15px var(--tet-red); transform: scale(1.1); z-index: 2; }
+        .tile.hidden { visibility: hidden; pointer-events: none; }
 
-        h1 {
-            margin: 25px 0 5px 0;
-            font-size: 24px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #87CEEB;
-        }
-
-        .subtitle {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 30px;
-            font-style: italic;
-        }
-
-        /* Cụm nút bấm lanh lợi */
-        .links-group {
-            width: 90%;
-            max-width: 360px;
-        }
-
-        .btn {
-            display: block;
-            background: #1a1a1a;
-            color: white;
-            text-decoration: none;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: bold;
-            border: 1px solid #333;
-            transition: 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Hiệu ứng nhấn nút đúng chất Chiến thần */
-        .btn:active {
-            transform: scale(0.95);
-            background: #d4ff00;
-            color: black;
-            box-shadow: 0 0 15px #d4ff00;
-        }
-
-        /* Màu sắc đặc trưng từng mục */
-        .btn-chat { border-left: 5px solid #ffffff; background: linear-gradient(to right, #1a1a1a, #2a2a2a); }
-        .btn-game-onet { border-left: 5px solid #d4ff00; color: #d4ff00; } /* Nút Onet mới của ní */
-        .btn-chill { border-left: 5px solid #4CAF50; }
-        .btn-art { border-left: 5px solid #87CEEB; }
+        #connector-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        .line { stroke: var(--accent); stroke-width: 6; fill: none; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 8px var(--accent)); animation: fadeOut 0.4s forwards; }
+        
+        @keyframes fadeOut { from {opacity: 1;} to {opacity: 0;} }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
     </style>
 </head>
 <body>
 
-    <div class="profile-container">
-        <div class="glow"></div>
-        <img src="https://i.postimg.cc/7hWC8zjg/Picsart-26-02-03-21-57-00-130.png" class="profile-pic" alt="PHONG LÊ NHB">
+    <div id="start-screen" onclick="startApp()">
+        <button class="btn-start">CHƠI NGAY 🧨</button>
+        <p style="color: #666; margin-top: 15px;">Full Hào Quang - Audio Folder New</p>
     </div>
 
-    <h1>PHONG LÊ NHB</h1>
-    <div class="subtitle">Pháp Sư Picsart | Chiến Thần Game</div>
-
-    <div class="links-group">
-        <a href="/chat/" class="btn btn-chat">💬 NHẮN TIN CRYSTAL 1PX 🤑</a>
-        
-        <a href="/game/" class="btn btn-game-onet">🎮 GAME ONET NỐI THÚ 🧧</a>
-        
-        <a href="#" class="btn btn-chill">🌾 NÔNG TRẠI HAY DAY</a>
-        <a href="#" class="btn btn-art">🎨 KHO ẢNH PICSART & CANVA</a>
-        <a href="#" class="btn">🛠️ STEAM / XBOX / GFN</a>
+    <div class="header">
+        <div class="info-row">
+            <div>💰 <span id="money">500</span></div>
+            <div>LV <span id="lv">1</span></div>
+            <div>DREAM <span id="score">0</span></div>
+        </div>
+        <div class="timer-outer"><div id="timer-bar"></div></div>
     </div>
 
-    <p style="margin-top: 40px; font-size: 10px; color: #333;">Design by Gemini & Ní</p>
+    <div class="tool-menu">
+        <button class="tool-btn" onclick="useHint()">🔍 GỢI Ý (500 xu)</button>
+        <button class="tool-btn" onclick="nextBg()">🖼️ ĐỔI NỀN</button>
+        <button class="tool-btn" onclick="nextSong()">🎵 ĐỔI NHẠC</button>
+    </div>
 
+    <div class="board-container" id="board-cont">
+        <div id="game-board"></div>
+        <svg id="connector-svg"></svg>
+    </div>
+
+    <audio id="bg-music" loop src="Nhac.mp3"></audio>
+    <audio id="s-match" src="dung.mp3"></audio>
+    <audio id="s-oto" src="sai.mp3"></audio>
+    <audio id="s-click" src="khi_nhan_nut.mp3"></audio>
+
+    <script>
+        const COLS = 12, ROWS = 7;
+        const icons = ['🧧','🏮','🍊','🌸','🧨','🎋','💰','✨','🍎','🍑','🍍','🍉','🍱','🦁','🎍','🪁'];
+        
+        const bgs = [
+            'url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932")',
+            'url("https://images.unsplash.com/photo-1467139701929-18c0d27a7516?q=80&w=2070")',
+            'url("https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070")'
+        ];
+
+        let matrix = [], selected = null, money = 500, score = 0, lv = 1, bgIdx = 0, timeLeft = 100, timerInt;
+
+        function playSound(id) {
+            const s = document.getElementById(id);
+            if (s) { s.currentTime = 0; s.play().catch(() => {}); }
+        }
+
+        function startApp() {
+            document.getElementById('start-screen').style.display = 'none';
+            const m = document.getElementById('bg-music');
+            m.volume = 0.4;
+            m.play().catch(() => {});
+            playSound('s-click');
+            loadOrInit();
+        }
+
+        function loadOrInit() {
+            const saved = JSON.parse(localStorage.getItem('onet_crystal_pro_save'));
+            if(saved) {
+                matrix = saved.matrix; money = saved.money; lv = saved.lv; score = saved.score;
+                updateUI(); renderBoard(); startTimer();
+            } else { initGame(); }
+        }
+
+        function initGame() {
+            clearInterval(timerInt); timeLeft = 100;
+            matrix = Array.from({ length: ROWS + 2 }, () => Array(COLS + 2).fill(null));
+            let items = [];
+            for (let i = 0; i < (ROWS * COLS) / 2; i++) items.push(icons[i % icons.length], icons[i % icons.length]);
+            items.sort(() => Math.random() - 0.5);
+            let k = 0;
+            for (let r = 1; r <= ROWS; r++) for (let c = 1; c <= COLS; c++) matrix[r][c] = items[k++];
+            
+            ensureSolvable(); renderBoard(); startTimer(); saveGame();
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+            document.body.style.backgroundImage = bgs[bgIdx];
+            for (let r = 1; r <= ROWS; r++) {
+                for (let c = 1; c <= COLS; c++) {
+                    const div = document.createElement('div');
+                    div.className = 'tile' + (matrix[r][c] ? '' : ' hidden');
+                    div.innerHTML = matrix[r][c] || '';
+                    div.id = `t-${r}-${c}`;
+                    div.onclick = () => handleSelect(div, r, c);
+                    board.appendChild(div);
+                }
+            }
+            updateUI();
+        }
+
+        function handleSelect(el, r, c) {
+            if (!matrix[r][c]) return;
+            playSound('s-click');
+
+            if (!selected) {
+                selected = { el, r, c }; el.classList.add('selected');
+            } else {
+                if (selected.r === r && selected.c === c) {
+                    el.classList.remove('selected'); selected = null; return;
+                }
+                
+                const path = findPath(selected.r, selected.c, r, c);
+                if (matrix[selected.r][selected.c] === matrix[r][c] && path) {
+                    drawPath(path);
+                    playSound('s-match');
+                    matrix[selected.r][selected.c] = matrix[r][c] = null;
+                    money += 20; score += 10;
+                    setTimeout(() => { ensureSolvable(); renderBoard(); checkWin(); saveGame(); }, 200);
+                } else {
+                    playSound('s-oto');
+                }
+                selected.el.classList.remove('selected'); selected = null;
+            }
+        }
+
+        function findPath(r1, c1, r2, c2) {
+            const queue = [{ r: r1, c: c1, dir: -1, turns: 0, path: [{ r: r1, c: c1 }] }];
+            const visited = new Map();
+            while (queue.length > 0) {
+                const curr = queue.shift();
+                if (curr.turns > 2) continue;
+                if (curr.r === r2 && curr.c === c2) return curr.path;
+                const ds = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                for (let i = 0; i < 4; i++) {
+                    let nr = curr.r + ds[i][0], nc = curr.c + ds[i][1];
+                    if (nr >= 0 && nr <= ROWS + 1 && nc >= 0 && nc <= COLS + 1) {
+                        if (matrix[nr][nc] === null || (nr === r2 && nc === c2)) {
+                            let nTurns = (curr.dir !== -1 && curr.dir !== i) ? curr.turns + 1 : curr.turns;
+                            if (nTurns <= 2) {
+                                let key = `${nr}-${nc}-${i}`;
+                                if (!visited.has(key) || visited.get(key) > nTurns) {
+                                    visited.set(key, nTurns);
+                                    queue.push({ r: nr, c: nc, dir: i, turns: nTurns, path: [...curr.path, { r: nr, c: nc }] });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        function ensureSolvable() {
+            let possible = false;
+            for(let r1=1; r1<=ROWS; r1++) for(let c1=1; c1<=COLS; c1++) {
+                if(!matrix[r1][c1]) continue;
+                for(let r2=1; r2<=ROWS; r2++) for(let c2=1; c2<=COLS; c2++) {
+                    if((r1===r2 && c1===c2) || matrix[r1][c1] !== matrix[r2][c2]) continue;
+                    if(findPath(r1,c1,r2,c2)) { possible = true; break; }
+                }
+                if(possible) break;
+            }
+            if(!possible && matrix.flat().some(v => v !== null)) shuffleBoard();
+        }
+
+        function shuffleBoard() {
+            let items = matrix.flat().filter(v => v !== null);
+            items.sort(() => Math.random() - 0.5);
+            let k = 0;
+            for (let r = 1; r <= ROWS; r++) for (let c = 1; c <= COLS; c++) if (matrix[r][c]) matrix[r][c] = items[k++];
+            renderBoard();
+        }
+
+        function drawPath(path) {
+            const svg = document.getElementById('connector-svg');
+            let pts = path.map(p => {
+                const x = (p.c - 1) * 47 + 45;
+                const y = (p.r - 1) * 57 + 50;
+                return `${x},${y}`;
+            });
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            line.setAttribute("points", pts.join(" ")); line.setAttribute("class", "line");
+            svg.appendChild(line); setTimeout(() => line.remove(), 400);
+        }
+
+        function startTimer() {
+            timerInt = setInterval(() => {
+                timeLeft -= 0.35;
+                document.getElementById('timer-bar').style.width = timeLeft + "%";
+                if (timeLeft <= 0) { clearInterval(timerInt); alert("HẾT GIỜ RỒI NÍ!"); location.reload(); }
+            }, 1000);
+        }
+
+        function useHint() {
+            if (money < 500) return alert("KHÔNG ĐỦ XU!");
+            playSound('s-click');
+            for(let r1=1; r1<=ROWS; r1++) for(let c1=1; c1<=COLS; c1++) {
+                if(!matrix[r1][c1]) continue;
+                for(let r2=1; r2<=ROWS; r2++) for(let c2=1; c2<=COLS; c2++) {
+                    if((r1===r2 && c1===c2) || matrix[r1][c1] !== matrix[r2][c2]) continue;
+                    if(findPath(r1,c1,r2,c2)) {
+                        money -= 500;
+                        document.getElementById(`t-${r1}-${c1}`).style.boxShadow = "0 0 20px var(--accent)";
+                        document.getElementById(`t-${r2}-${c2}`).style.boxShadow = "0 0 20px var(--accent)";
+                        updateUI();
+                        setTimeout(() => renderBoard(), 1000); return;
+                    }
+                }
+            }
+        }
+
+        function nextSong() { playSound('s-click'); document.getElementById('bg-music').play(); }
+        function nextBg() { playSound('s-click'); bgIdx = (bgIdx + 1) % bgs.length; renderBoard(); }
+        function updateUI() { 
+            document.getElementById('money').innerText = money; 
+            document.getElementById('lv').innerText = lv; 
+            document.getElementById('score').innerText = score; 
+        }
+        function checkWin() { if (matrix.flat().every(v => v === null)) { lv++; money += 500; initGame(); } }
+        function saveGame() { localStorage.setItem('onet_crystal_pro_save', JSON.stringify({ matrix, money, lv, score })); }
+    </script>
 </body>
 </html>
