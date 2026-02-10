@@ -3,59 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crystal Chat Friend Menu 💎</title>
+    <title>Crystal Chat Anti-Hide 💎</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         :root { --accent: #7cd342; --glass: rgba(255, 255, 255, 0.05); --blur: blur(1px); }
-        body {
-            margin: 0; font-family: 'Segoe UI', sans-serif; height: 100vh;
-            background: #0a0a0a url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover; color: white; display: flex; flex-direction: column; overflow: hidden;
-        }
-        .container {
-            flex: 1; display: flex; flex-direction: column; max-width: 480px; margin: 10px auto;
-            width: 92%; background: var(--glass); backdrop-filter: var(--blur);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-        }
-        .header { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; }
         
-        /* Menu Chọn Bạn */
+        /* Fix chiều cao dynamic để không mất nút khi hiện bàn phím */
+        body {
+            margin: 0; font-family: 'Segoe UI', sans-serif; 
+            height: 100vh; height: 100dvh; /* Đơn vị lanh lợi cho di động */
+            background: #0a0a0a url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover; color: white;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        .container {
+            flex: 1; display: flex; flex-direction: column;
+            width: 100%; max-width: 480px; margin: 0 auto;
+            background: var(--glass); backdrop-filter: var(--blur);
+            border-left: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden; /* Giữ mọi thứ bên trong */
+        }
+
+        .header { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; flex-shrink: 0; }
+        
         .friend-menu {
-            padding: 10px; display: flex; gap: 8px; overflow-x: auto;
-            background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 8px; display: flex; gap: 8px; overflow-x: auto;
+            background: rgba(0,0,0,0.2); flex-shrink: 0;
         }
-        .friend-menu::-webkit-scrollbar { height: 0px; }
         .friend-item {
-            padding: 5px 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 15px; font-size: 11px; white-space: nowrap; cursor: pointer;
+            padding: 4px 10px; background: rgba(255,255,255,0.1); border-radius: 12px;
+            font-size: 11px; white-space: nowrap; cursor: pointer; border: 1px solid transparent;
         }
-        .friend-item.active { border-color: var(--accent); color: var(--accent); background: rgba(124, 211, 66, 0.1); }
+        .friend-item.active { border-color: var(--accent); color: var(--accent); }
 
-        #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px; border-radius: 12px; max-width: 80%; font-size: 14px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(2px); }
-        .sent { align-self: flex-end; background: var(--accent); color: black; border-bottom-right-radius: 2px; }
-        .received { align-self: flex-start; background: rgba(255,255,255,0.1); border-bottom-left-radius: 2px; }
-        .msg img { max-width: 100%; border-radius: 8px; margin-top: 5px; }
+        /* Hòm chat tự co giãn lanh lợi */
+        #chat-box { 
+            flex: 1; overflow-y: auto; padding: 15px; 
+            display: flex; flex-direction: column; gap: 10px;
+            -webkit-overflow-scrolling: touch; /* Mượt cho Samsung */
+        }
 
-        .input-area { padding: 15px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.1); border-radius: 0 0 20px 20px; }
+        .msg { padding: 10px; border-radius: 12px; max-width: 80%; font-size: 14px; border: 1px solid rgba(255,255,255,0.1); }
+        .sent { align-self: flex-end; background: var(--accent); color: black; }
+        .received { align-self: flex-start; background: rgba(255,255,255,0.1); }
+        .msg img { max-width: 100%; border-radius: 8px; }
+
+        /* Khu vực nhập liệu luôn bám đáy */
+        .input-area { 
+            padding: 10px; background: rgba(0,0,0,0.4); 
+            border-top: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom); /* Fix cho máy có tai thỏ/nút ảo */
+        }
         .controls { display: flex; gap: 8px; align-items: center; }
-        input[type="text"] { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; color: white; flex: 1; outline: none; }
-        .btn-add { background: none; border: 1px solid var(--accent); color: var(--accent); border-radius: 50%; width: 30px; height: 30px; cursor: pointer; }
+        
+        input[type="text"] { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px; border-radius: 8px; color: white; flex: 1; outline: none; font-size: 16px; /* 16px để ko bị auto zoom trên iPhone */
+        }
+        
+        .btn-send { background: var(--accent); border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        
+        .id-badge { color: var(--accent); font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="header">
-            <div style="font-size: 10px; opacity: 0.6;">ID CỦA NÍ: <b id="my-id-display" style="color:var(--accent); font-size:16px;">----</b></div>
-            <div style="margin-top:10px; display:flex; gap:5px; justify-content:center;">
-                <input type="text" id="peer-id-input" placeholder="ID bạn mới..." style="width:100px; font-size:12px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:white; border-radius:5px; padding:4px;">
-                <button class="btn-add" onclick="addFriend()">+</button>
+            <div class="id-badge">ID: <span id="my-id-display">----</span></div>
+            <div style="margin-top:5px; display:flex; gap:5px; justify-content:center;">
+                <input type="text" id="peer-id-input" placeholder="Nhập ID bạn..." style="width:100px; font-size:11px; padding:3px;">
+                <button onclick="addFriend()" style="font-size:10px;">LƯU BẠN</button>
             </div>
         </div>
 
         <div class="friend-menu" id="friend-menu">
-            <div class="friend-item active" onclick="selectFriend('', this)">Tất cả</div>
+            <div class="friend-item active">Tất cả</div>
         </div>
 
         <div id="chat-box"></div>
@@ -64,7 +88,7 @@
             <div class="controls">
                 <label style="cursor:pointer; font-size:18px;">📁<input type="file" id="file-input" style="display:none" onchange="sendFile()"></label>
                 <input type="text" id="message-input" placeholder="Nhắn gì đi ní...">
-                <button onclick="sendMessage()" style="background:var(--accent); border:none; padding:10px 15px; border-radius:10px; font-weight:bold; cursor:pointer;">GỬI</button>
+                <button class="btn-send" onclick="sendMessage()">GỬI</button>
             </div>
         </div>
     </div>
@@ -72,9 +96,8 @@
     <script>
         let peer, conn;
         const chatBox = document.getElementById('chat-box');
-        const friendMenu = document.getElementById('friend-menu');
-        const STORAGE_KEY = 'crystal_friends_v1';
-        const MSG_KEY = 'crystal_msg_v1';
+        const STORAGE_FRIENDS = 'crystal_friends_v2';
+        const STORAGE_MSGS = 'crystal_msgs_v2';
         const ID_KEY = 'crystal_fixed_id';
 
         function initPeer() {
@@ -83,50 +106,49 @@
             
             peer = new Peer(fixedId);
             peer.on('open', (id) => document.getElementById('my-id-display').innerText = id);
-            peer.on('connection', (connection) => { conn = connection; setupConn(); });
+            peer.on('connection', (c) => { conn = c; setupConn(); });
             
             loadFriends();
             loadMessages();
+            
+            // Cuộn xuống cuối ngay khi mở
+            setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 500);
         }
 
-        // 1. Quản lý danh bạ
         function addFriend() {
             const id = document.getElementById('peer-id-input').value.trim();
             if (!id) return;
-            const name = prompt("Đặt tên cho ní này:", "Ní " + id);
+            const name = prompt("Đặt tên cho ní:", "Bạn " + id);
             if (!name) return;
-
-            let friends = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            let friends = JSON.parse(localStorage.getItem(STORAGE_FRIENDS)) || [];
             if (!friends.find(f => f.id === id)) {
                 friends.push({ id, name });
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(friends));
+                localStorage.setItem(STORAGE_FRIENDS, JSON.stringify(friends));
                 loadFriends();
             }
-            document.getElementById('peer-id-input').value = id;
         }
 
         function loadFriends() {
-            let friends = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            friendMenu.innerHTML = '<div class="friend-item active" onclick="selectFriend(\'\', this)">Tất cả</div>';
+            let friends = JSON.parse(localStorage.getItem(STORAGE_FRIENDS)) || [];
+            const menu = document.getElementById('friend-menu');
+            menu.innerHTML = '<div class="friend-item active" onclick="selFriend(\'\', this)">Tất cả</div>';
             friends.forEach(f => {
                 const item = document.createElement('div');
                 item.className = 'friend-item';
                 item.innerText = f.name;
-                item.onclick = () => selectFriend(f.id, item);
-                friendMenu.appendChild(item);
+                item.onclick = () => selFriend(f.id, item);
+                menu.appendChild(item);
             });
         }
 
-        function selectFriend(id, el) {
+        function selFriend(id, el) {
             document.querySelectorAll('.friend-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
             document.getElementById('peer-id-input').value = id;
-            // Lọc tin nhắn (tính năng nâng cao có thể thêm sau)
         }
 
-        // 2. Chat logic
         function setupConn() {
-            conn.on('data', (data) => appendAndSave('Ní', data, 'received', conn.peer));
+            conn.on('data', (data) => appendAndSave('Ní', data, 'received'));
         }
 
         function sendMessage() {
@@ -141,7 +163,7 @@
                 return;
             }
             conn.send(msg);
-            appendAndSave('Bạn', msg, 'sent', targetId);
+            appendAndSave('Bạn', msg, 'sent');
             document.getElementById('message-input').value = '';
         }
 
@@ -149,28 +171,24 @@
             const file = document.getElementById('file-input').files[0];
             const targetId = document.getElementById('peer-id-input').value.trim();
             if (!file || !targetId) return;
-
             const reader = new FileReader();
             reader.onload = () => {
                 const data = { name: file.name, type: file.type, data: reader.result };
                 if (!conn || conn.peer !== targetId) {
                     conn = peer.connect(targetId);
                     setupConn();
-                    setTimeout(() => { conn.send(data); appendAndSave('Bạn', data, 'sent', targetId); }, 1000);
-                } else {
-                    conn.send(data);
-                    appendAndSave('Bạn', data, 'sent', targetId);
-                }
+                    setTimeout(() => { conn.send(data); appendAndSave('Bạn', data, 'sent'); }, 1000);
+                } else { conn.send(data); appendAndSave('Bạn', data, 'sent'); }
             };
             reader.readAsDataURL(file);
         }
 
-        function appendAndSave(sender, content, type, peerId) {
+        function appendAndSave(sender, content, type) {
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             appendMessage(sender, content, type, time);
-            let history = JSON.parse(localStorage.getItem(MSG_KEY)) || [];
-            history.push({ sender, content, type, time, peerId });
-            localStorage.setItem(MSG_KEY, JSON.stringify(history));
+            let history = JSON.parse(localStorage.getItem(STORAGE_MSGS)) || [];
+            history.push({ sender, content, type, time });
+            localStorage.setItem(STORAGE_MSGS, JSON.stringify(history));
         }
 
         function appendMessage(sender, content, type, time) {
@@ -188,7 +206,7 @@
         }
 
         function loadMessages() {
-            let history = JSON.parse(localStorage.getItem(MSG_KEY)) || [];
+            let history = JSON.parse(localStorage.getItem(STORAGE_MSGS)) || [];
             history.forEach(m => appendMessage(m.sender, m.content, m.type, m.time));
         }
 
