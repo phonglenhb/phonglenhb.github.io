@@ -28,9 +28,10 @@
             background-position: center center;
             background-attachment: fixed;
             background-size: cover; 
-            font-family: sans-serif; color: white;
+            font-family: -apple-system, Helvetica, Arial, sans-serif; color: white;
             display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
             transition: background-image 0.5s ease-in-out;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* HEADER */
@@ -44,7 +45,7 @@
         .btn { 
             background: rgba(255,255,255,0.1); border: var(--crystal); border-radius: 8px; 
             padding: 8px 12px; color: white; font-size: 10px; font-weight: bold; cursor: pointer;
-            backdrop-filter: blur(5px); text-transform: uppercase;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); text-transform: uppercase;
         }
 
         /* VÙNG GAME */
@@ -60,41 +61,22 @@
         .tile.active { background: #ff3e3e; border-color: white; transform: scale(1.1); z-index: 6; box-shadow: 0 0 15px #ff3e3e; }
         .tile.hide { visibility: hidden; pointer-events: none; }
 
-        /* --- STYLE GIAO DIỆN CŨ (CLASSIC) --- */
+        /* STYLE CLASSIC */
+        body.classic .header { background: linear-gradient(to bottom, #45484d 0%, #000000 100%); border-bottom: 1px solid #222; }
+        body.classic .info { color: #fff; text-shadow: 0 -1px 0 #000; }
+        body.classic .timer-box { background: #333; border: 1px solid #111; }
         body.classic .btn {
-            background: linear-gradient(to bottom, #eeeeee 0%, #cccccc 100%);
-            border: 2px solid #666; color: #333; text-shadow: 0 1px 0 #fff;
+            background: linear-gradient(to bottom, #7d7e7d 0%, #0e0e0e 100%);
+            border: 1px solid #000; border-radius: 5px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.8);
+            color: #eee; text-shadow: 0 -1px 0 #000; font-size: 9px; padding: 10px 14px;
         }
         body.classic .tile {
-            background: #f0f0f0; border: 2px solid #999; border-radius: 4px;
-            box-shadow: inset -2px -2px 0px #bbb, inset 2px 2px 0px #fff;
-            color: #000;
+            background: linear-gradient(135deg, #ffffff 0%, #e5e5e5 100%);
+            border: 1px solid #999; border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 #fff; color: #333;
         }
-        body.classic .tile.active {
-            background: #ffff00; border-color: #ff0000; box-shadow: 0 0 10px #ff0000;
-        }
-        body.classic .header { background: #333; border-bottom: 2px solid #000; }
-
-        /* OVERLAYS */
-        #fullscreen-overlay, #ui-question-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); z-index: 9999; 
-            display: flex; align-items: center; justify-content: center; 
-        }
-        #ui-question-overlay { display: none; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
-        
-        .start-card, .question-card { 
-            background: var(--glass); border: 2px solid var(--accent); 
-            padding: 35px 20px; border-radius: 20px; text-align: center; 
-            box-shadow: 0 0 50px var(--accent); width: 85%; max-width: 400px;
-        }
-        
-        .big-play-btn, .choice-btn { 
-            width: 100%; padding: 18px; margin: 10px 0;
-            background: var(--accent); color: #000; border: none; 
-            border-radius: 15px; font-weight: 900; font-size: 18px; cursor: pointer;
-        }
-        .choice-btn.alt { background: #fff; color: #000; }
+        body.classic .tile.active { background: #ffcc00; border-color: #ff9900; box-shadow: 0 0 12px #ffcc00, inset 0 1px 0 #fff; }
 
         #line-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 100; }
         .shuffle-shake { animation: shake 0.4s ease-in-out; }
@@ -106,23 +88,7 @@
         }
     </style>
 </head>
-<body oncontextmenu="return false;"> 
-
-<div id="fullscreen-overlay">
-    <div class="start-card">
-        <h1 style="color:var(--accent); margin:0">ONET CRYSTAL PRO 💎</h1>
-        <p>Phiên bản Pháp Sư Picsart</p>
-        <button class="big-play-btn" onclick="askUI()">VÀO GAME 🚀</button>
-    </div>
-</div>
-
-<div id="ui-question-overlay">
-    <div class="question-card">
-        <h2 style="color:#fff; margin-bottom:20px">CHỌN GIAO DIỆN?</h2>
-        <button class="choice-btn" onclick="confirmUI('classic')">📜 CỔ ĐIỂN (CLASSIC)</button>
-        <button class="choice-btn alt" onclick="confirmUI('crystal')">💎 PHA LÊ (CRYSTAL)</button>
-    </div>
-</div>
+<body oncontextmenu="return false;" onload="autoStart()"> 
 
 <div class="header">
     <div class="info">
@@ -134,10 +100,10 @@
 </div>
 
 <div class="menu">
-    <div class="btn" style="color: #00ffff;" onclick="toggleUI()">🌓 GIAO DIỆN</div>
-    <div class="btn" onclick="autoFind()">🔍 GỢI Ý (300)</div>
-    <div class="btn" onclick="manualShuffle()">🔄 ĐẢO (100)</div>
-    <div class="btn" onclick="changeBg()">🖼️ NỀN</div>
+    <div class="btn" style="color: #00ffff;" onclick="toggleUI()" ontouchend="event.preventDefault(); toggleUI();">🌓 GIAO DIỆN</div>
+    <div class="btn" onclick="autoFind()" ontouchend="event.preventDefault(); autoFind();">🔍 GỢI Ý (300)</div>
+    <div class="btn" onclick="manualShuffle()" ontouchend="event.preventDefault(); manualShuffle();">🔄 ĐẢO (100)</div>
+    <div class="btn" onclick="changeBg()" ontouchend="event.preventDefault(); changeBg();">🖼️ NỀN</div>
 </div>
 
 <div class="game-area">
@@ -157,37 +123,28 @@
     let currentBgIndex = 0;
     let map=[], pick=null, xu=500, pts=0, lv=1, time=100, timer;
 
-    // --- LOGIC TỰ ĐỘNG PHÁT HIỆN BẢNG LỆCH ---
-    function askUI() {
-        sound('s_tap');
-        const board = document.getElementById('board');
-        const screenW = window.innerWidth;
-        const screenH = window.innerHeight;
+    // Tự động chạy game khi load trang
+    function autoStart() {
+        const savedMode = localStorage.getItem('onet_ui_mode') || 'crystal';
+        if(savedMode === 'classic') document.body.classList.add('classic');
         
-        // Nếu màn hình quá vuông (tỉ lệ < 1.4) hoặc quá nhỏ - dấu hiệu của iPad cũ/màn hình lỗi
-        const isLikelyGlitchy = (screenW / screenH) < 1.45;
-
-        if (isLikelyGlitchy) {
-            console.log("Phát hiện màn hình iPad hoặc tỉ lệ lệch. Tự động bật Classic.");
-            confirmUI('classic'); // Vào thẳng Classic không hỏi
+        const hasSave = loadFromDevice(); 
+        document.body.style.backgroundImage = `url('${bgs[currentBgIndex]}')`;
+        
+        if(hasSave && map.length > 0) {
+            draw(); 
+            startTimer();
         } else {
-            document.getElementById('fullscreen-overlay').style.display = 'none';
-            document.getElementById('ui-question-overlay').style.display = 'flex';
+            init();
         }
-    }
-
-    function confirmUI(mode) {
-        sound('s_tap');
-        if(mode === 'classic') {
-            document.body.classList.add('classic');
-            localStorage.setItem('onet_ui_mode', 'classic');
-        } else {
-            document.body.classList.remove('classic');
-            localStorage.setItem('onet_ui_mode', 'crystal');
-        }
-        document.getElementById('fullscreen-overlay').style.display = 'none';
-        document.getElementById('ui-question-overlay').style.display = 'none';
-        startWithFull();
+        resizeCanvas();
+        window.onresize = resizeCanvas;
+        
+        // Nhạc nền thường bị trình duyệt chặn nếu không có tương tác, 
+        // nên tui để nó chạy ngay khi ní chạm vào màn hình lần đầu.
+        document.body.addEventListener('touchstart', () => {
+            document.getElementById('m_bg').play().catch(()=>{});
+        }, {once: true});
     }
 
     function toggleUI() {
@@ -217,7 +174,13 @@
         return false;
     }
 
-    function sound(id){ const a=document.getElementById(id); if(a){ a.currentTime=0; a.play().catch(()=>{}); } }
+    function sound(id){ 
+        const a=document.getElementById(id); 
+        if(a){ 
+            a.currentTime=0; 
+            a.play().catch(e => {});
+        } 
+    }
 
     function changeBg() {
         sound('s_tap');
@@ -226,29 +189,13 @@
         saveToDevice();
     }
 
-    function startWithFull(){
-        if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
-        document.getElementById('m_bg').play().catch(()=>{});
-        
-        const hasSave = loadFromDevice(); 
-        document.body.style.backgroundImage = `url('${bgs[currentBgIndex]}')`;
-        
-        if(hasSave && map.length > 0) {
-            draw(); 
-            startTimer();
-        } else {
-            init();
-        }
-        
-        resizeCanvas();
-        window.onresize = resizeCanvas;
-    }
-
     function resizeCanvas() {
         const cvs = document.getElementById('line-canvas');
         const area = document.querySelector('.game-area');
-        cvs.width = area.clientWidth;
-        cvs.height = area.clientHeight;
+        if(cvs && area) {
+            cvs.width = area.clientWidth;
+            cvs.height = area.clientHeight;
+        }
     }
 
     function init(){
@@ -263,13 +210,23 @@
     }
 
     function draw(){
-        const b = document.getElementById('board'); b.innerHTML='';
+        const b = document.getElementById('board'); 
+        if(!b) return;
+        b.innerHTML='';
         for(let r=1; r<=R; r++) for(let c=1; c<=C; c++){
             const d = document.createElement('div');
             d.className = 'tile' + (map[r][c]?'':' hide');
             d.id = `tile-${r}-${c}`;
             d.innerHTML = map[r][c]||'';
-            d.onclick = () => click(d,r,c);
+            
+            d.ontouchend = (e) => {
+                e.preventDefault(); 
+                click(d, r, c);
+            };
+            d.onclick = (e) => {
+                click(d, r, c);
+            };
+            
             b.appendChild(d);
         }
         document.getElementById('xu').innerText=xu;
@@ -308,6 +265,7 @@
     }
 
     function click(el,r,c){
+        if(!map[r][c]) return;
         sound('s_tap');
         if(!pick){ pick={el,r,c}; el.classList.add('active'); }
         else {
@@ -316,8 +274,13 @@
             if(map[pick.r][pick.c]===map[r][c] && path){
                 drawPath(path);
                 handleMatch(pick.r, pick.c, r, c);
-            } else { sound('s_no'); }
-            pick.el.classList.remove('active'); pick=null;
+                pick = null;
+            } else { 
+                sound('s_no');
+                pick.el.classList.remove('active');
+                pick = {el, r, c};
+                el.classList.add('active');
+            }
         }
     }
 
@@ -325,9 +288,9 @@
         sound('s_ok');
         map[r1][c1] = map[r2][c2] = null;
         xu += 10; pts += 5;
-        if(Math.random() < 0.05) shuffle();
+        if(Math.random() < 0.03) shuffle();
         checkAndShuffle();
-        setTimeout(draw, 200);
+        setTimeout(draw, 150);
         if(map.flat().every(v => v === null)){ lv++; xu+=200; localStorage.removeItem('onet_pro_save'); init(); }
     }
 
@@ -366,6 +329,7 @@
 
     function shuffle(){
         const b = document.getElementById('board');
+        if(!b) return;
         b.classList.add('shuffle-shake');
         let items = map.flat().filter(v => v !== null);
         items.sort(() => Math.random() - 0.5);
@@ -374,7 +338,14 @@
         setTimeout(() => { b.classList.remove('shuffle-shake'); draw(); }, 400);
     }
 
-    function manualShuffle(){ if(xu>=100){ xu-=100; sound('s_tap'); shuffle(); } }
+    function manualShuffle(){ 
+        if(xu>=100){ 
+            xu-=100; 
+            sound('s_tap'); 
+            shuffle(); 
+            document.getElementById('xu').innerText=xu;
+        } 
+    }
     
     function autoFind(){
         if(xu<300) return;
@@ -383,7 +354,13 @@
             for(let r2=1; r2<=R; r2++) for(let c2=1; c2<=C; c2++){
                 if((r1===r2 && c1===c2) || !map[r2][c2] || map[r1][c1]!==map[r2][c2]) continue;
                 let path = checkPath(r1,c1,r2,c2);
-                if(path){ xu-=300; drawPath(path); handleMatch(r1,c1,r2,c2); return; }
+                if(path){ 
+                    xu-=300; 
+                    drawPath(path); 
+                    handleMatch(r1,c1,r2,c2); 
+                    document.getElementById('xu').innerText=xu;
+                    return; 
+                }
             }
         }
     }
@@ -392,7 +369,8 @@
         if(timer) clearInterval(timer);
         timer = setInterval(()=>{
             time -= 0.15;
-            document.getElementById('timer-bar').style.width = time+"%";
+            const bar = document.getElementById('timer-bar');
+            if(bar) bar.style.width = time+"%";
             if(time <= 15) saveToDevice();
             if(time<=0){ clearInterval(timer); localStorage.removeItem('onet_pro_save'); alert("Hết giờ! Chơi lại nhé ní."); location.reload(); }
         },1000);
