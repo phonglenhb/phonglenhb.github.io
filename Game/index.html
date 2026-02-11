@@ -4,14 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Onet Crystal Pro 2026 💎</title>
-    <style>
+    <style id="theme-style">
         :root { 
             --accent: #d4ff00; 
             --line-color: #00ff00;
             --glass: rgba(0, 0, 0, 0.85);
             --crystal: 1px solid rgba(255, 255, 255, 0.2);
         }
-        * { box-sizing: border-box; touch-action: manipulation; }
+        
+        * { 
+            box-sizing: border-box; 
+            touch-action: manipulation; 
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body { 
             margin: 0; padding: 0;
             background-color: #000;
@@ -21,7 +32,7 @@
             background-size: cover; 
             font-family: sans-serif; color: white;
             display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
-            transition: background-image 0.5s ease-in-out; /* Hiệu ứng đổi nền mượt */
+            transition: background-image 0.5s ease-in-out;
         }
 
         /* HEADER */
@@ -36,21 +47,13 @@
             background: rgba(255,255,255,0.1); border: var(--crystal); border-radius: 8px; 
             padding: 8px 12px; color: white; font-size: 10px; font-weight: bold; cursor: pointer;
             backdrop-filter: blur(5px); text-transform: uppercase;
+            transition: transform 0.1s active;
         }
+        .btn:active { transform: scale(0.95); }
 
         /* VÙNG GAME */
         .game-area { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 10px; overflow: hidden; }
         #board { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0.5dvmin; width: fit-content; max-height: 70dvh; z-index: 5; }
-
-        .shuffle-shake { animation: shake 0.4s ease-in-out; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-5px); }
-        }
-
-        #line-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 100; }
 
         .tile { 
             aspect-ratio: 1 / 1; height: 8.5dvmin; background: rgba(255,255,255,0.1); 
@@ -61,18 +64,44 @@
         .tile.active { background: #ff3e3e; border-color: white; transform: scale(1.1); z-index: 6; box-shadow: 0 0 15px #ff3e3e; }
         .tile.hide { visibility: hidden; pointer-events: none; }
 
+        /* --- STYLE GIAO DIỆN CŨ (CLASSIC) --- */
+        body.classic .btn {
+            background: linear-gradient(to bottom, #eeeeee 0%, #cccccc 100%);
+            border: 2px solid #666; color: #333; text-shadow: 0 1px 0 #fff;
+        }
+        body.classic .tile {
+            background: #f0f0f0; border: 2px solid #999; border-radius: 4px;
+            box-shadow: inset -2px -2px 0px #bbb, inset 2px 2px 0px #fff;
+            color: #000;
+        }
+        body.classic .tile.active {
+            background: #ffff00; border-color: #ff0000; box-shadow: 0 0 10px #ff0000;
+        }
+        body.classic .header { background: #333; border-bottom: 2px solid #000; }
+
+        /* ANIMATION */
+        .shuffle-shake { animation: shake 0.4s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        #line-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 100; }
+
         /* OVERLAYS */
         #fullscreen-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 300; display: flex; align-items: center; justify-content: center; }
         .start-card { background: var(--glass); border: 2px solid var(--accent); padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 0 50px var(--accent); }
         .big-play-btn { padding: 15px 40px; background: var(--accent); color: #000; border: none; border-radius: 50px; font-weight: 900; font-size: 20px; cursor: pointer; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;"> 
 
 <div id="fullscreen-overlay">
     <div class="start-card">
         <h1 style="color:var(--accent); margin:0">ONET CRYSTAL PRO 💎</h1>
-        <p>Kho 7 Nền & Đường nối Neon</p>
+        <p>Phiên bản App Pro - Chống bôi đen & Auto Save</p>
         <button class="big-play-btn" onclick="startWithFull()">VÀO GAME 🚀</button>
     </div>
 </div>
@@ -87,6 +116,7 @@
 </div>
 
 <div class="menu">
+    <div class="btn" style="color: #00ffff;" onclick="toggleUI()">🌓 GIAO DIỆN</div>
     <div class="btn" onclick="autoFind()">🔍 GỢI Ý (300)</div>
     <div class="btn" onclick="manualShuffle()">🔄 ĐẢO (100)</div>
     <div class="btn" onclick="changeBg()">🖼️ NỀN</div>
@@ -105,20 +135,38 @@
 <script>
     const R=7, C=12;
     const icons = ['🧧','🏮','🍊','🌸','🧨','🎋','💰','✨','🍎','🍑','🍍','🍉','🍱','🦁','🎍','🪁','🍇','🍓','🥨','🥑'];
-    
-    // KHO HÌNH NỀN CỦA NÍ
-    const bgs = [
-        'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932', // Đồng cỏ xanh (Default)
-        'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2071', // Rừng xanh
-        'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=2070', // Núi hồ
-        'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1884', // Crystal Art
-        'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070', // Núi hùng vĩ
-        'https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=1950', // Thung lũng
-        'https://images.unsplash.com/photo-1532274402911-5a3b027c55b9?q=80&w=2070'  // Chiều tà vàng
-    ];
+    const bgs = ['1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg', '8.jpg'];
     let currentBgIndex = 0;
-
     let map=[], pick=null, xu=500, pts=0, lv=1, time=100, timer;
+
+    function toggleUI() {
+        sound('s_tap');
+        document.body.classList.toggle('classic');
+        const isClassic = document.body.classList.contains('classic');
+        localStorage.setItem('onet_ui_mode', isClassic ? 'classic' : 'crystal');
+    }
+
+    // LƯU TOÀN BỘ TRẠNG THÁI GAME
+    function saveToDevice() {
+        const data = { xu, lv, pts, currentBgIndex, map, time };
+        localStorage.setItem('onet_pro_save', JSON.stringify(data));
+    }
+
+    // TẢI LẠI TRẠNG THÁI GAME
+    function loadFromDevice() {
+        const saved = localStorage.getItem('onet_pro_save');
+        if (saved) {
+            const data = JSON.parse(saved);
+            xu = data.xu ?? 500;
+            lv = data.lv ?? 1;
+            pts = data.pts ?? 0;
+            currentBgIndex = data.currentBgIndex ?? 0;
+            time = data.time ?? 100;
+            if(data.map) map = data.map;
+            return true;
+        }
+        return false;
+    }
 
     function sound(id){ const a=document.getElementById(id); if(a){ a.currentTime=0; a.play().catch(()=>{}); } }
 
@@ -126,19 +174,32 @@
         sound('s_tap');
         currentBgIndex = (currentBgIndex + 1) % bgs.length;
         document.body.style.backgroundImage = `url('${bgs[currentBgIndex]}')`;
+        saveToDevice();
     }
 
     function startWithFull(){
         if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
         document.getElementById('fullscreen-overlay').style.display = 'none';
         document.getElementById('m_bg').play().catch(()=>{});
-        document.body.style.backgroundImage = `url('${bgs[0]}')`; // Nền đầu tiên
-        init();
+        
+        const hasSave = loadFromDevice(); 
+        document.body.style.backgroundImage = `url('${bgs[currentBgIndex]}')`;
+        
+        if (localStorage.getItem('onet_ui_mode') === 'classic') {
+            document.body.classList.add('classic');
+        }
+
+        if(hasSave && map.length > 0) {
+            draw(); 
+            startTimer(); // Tiếp tục thời gian cũ
+        } else {
+            init();
+        }
+        
         resizeCanvas();
         window.onresize = resizeCanvas;
     }
 
-    // --- GIỮ NGUYÊN TOÀN BỘ LOGIC CŨ ---
     function resizeCanvas() {
         const cvs = document.getElementById('line-canvas');
         const area = document.querySelector('.game-area');
@@ -170,6 +231,7 @@
         document.getElementById('xu').innerText=xu;
         document.getElementById('lv').innerText=lv;
         document.getElementById('pts').innerText=pts;
+        saveToDevice();
     }
 
     function drawPath(path) {
@@ -222,7 +284,7 @@
         if(Math.random() < 0.05) shuffle();
         checkAndShuffle();
         setTimeout(draw, 200);
-        if(map.flat().every(v => v === null)){ lv++; xu+=200; init(); }
+        if(map.flat().every(v => v === null)){ lv++; xu+=200; localStorage.removeItem('onet_pro_save'); init(); }
     }
 
     function checkPath(r1,c1,r2,c2){
@@ -283,10 +345,12 @@
     }
 
     function startTimer(){
+        if(timer) clearInterval(timer);
         timer = setInterval(()=>{
-            time -= 0.2;
+            time -= 0.15; // Tinh chỉnh tốc độ giảm
             document.getElementById('timer-bar').style.width = time+"%";
-            if(time<=0){ clearInterval(timer); location.reload(); }
+            if(time <= 15) saveToDevice(); // Lưu thường xuyên hơn khi sắp hết giờ
+            if(time<=0){ clearInterval(timer); localStorage.removeItem('onet_pro_save'); alert("Hết giờ! Chơi lại nhé ní."); location.reload(); }
         },1000);
     }
 </script>
