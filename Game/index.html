@@ -75,12 +75,10 @@
         }
         body.classic .header { background: #333; border-bottom: 2px solid #000; }
 
-        /* FIX OVERLAYS & POPUP CHO IPAD */
+        /* OVERLAYS */
         #fullscreen-overlay, #ui-question-overlay { 
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); 
-            z-index: 9999; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); z-index: 9999; 
             display: flex; align-items: center; justify-content: center; 
         }
         #ui-question-overlay { display: none; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
@@ -159,11 +157,23 @@
     let currentBgIndex = 0;
     let map=[], pick=null, xu=500, pts=0, lv=1, time=100, timer;
 
-    // --- PHẦN THÊM MỚI ---
+    // --- LOGIC TỰ ĐỘNG PHÁT HIỆN BẢNG LỆCH ---
     function askUI() {
         sound('s_tap');
-        document.getElementById('fullscreen-overlay').style.display = 'none';
-        document.getElementById('ui-question-overlay').style.display = 'flex';
+        const board = document.getElementById('board');
+        const screenW = window.innerWidth;
+        const screenH = window.innerHeight;
+        
+        // Nếu màn hình quá vuông (tỉ lệ < 1.4) hoặc quá nhỏ - dấu hiệu của iPad cũ/màn hình lỗi
+        const isLikelyGlitchy = (screenW / screenH) < 1.45;
+
+        if (isLikelyGlitchy) {
+            console.log("Phát hiện màn hình iPad hoặc tỉ lệ lệch. Tự động bật Classic.");
+            confirmUI('classic'); // Vào thẳng Classic không hỏi
+        } else {
+            document.getElementById('fullscreen-overlay').style.display = 'none';
+            document.getElementById('ui-question-overlay').style.display = 'flex';
+        }
     }
 
     function confirmUI(mode) {
@@ -175,10 +185,10 @@
             document.body.classList.remove('classic');
             localStorage.setItem('onet_ui_mode', 'crystal');
         }
+        document.getElementById('fullscreen-overlay').style.display = 'none';
         document.getElementById('ui-question-overlay').style.display = 'none';
         startWithFull();
     }
-    // -----------------------
 
     function toggleUI() {
         sound('s_tap');
