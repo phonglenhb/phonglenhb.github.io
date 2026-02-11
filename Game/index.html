@@ -101,7 +101,7 @@
 <div id="fullscreen-overlay">
     <div class="start-card">
         <h1 style="color:var(--accent); margin:0">ONET CRYSTAL PRO 💎</h1>
-        <p>Phiên bản App Pro - Chống bôi đen & Auto Save</p>
+        <p>Phiên bản App Pro - Classic UI Default</p>
         <button class="big-play-btn" onclick="startWithFull()">VÀO GAME 🚀</button>
     </div>
 </div>
@@ -146,13 +146,11 @@
         localStorage.setItem('onet_ui_mode', isClassic ? 'classic' : 'crystal');
     }
 
-    // LƯU TOÀN BỘ TRẠNG THÁI GAME
     function saveToDevice() {
         const data = { xu, lv, pts, currentBgIndex, map, time };
         localStorage.setItem('onet_pro_save', JSON.stringify(data));
     }
 
-    // TẢI LẠI TRẠNG THÁI GAME
     function loadFromDevice() {
         const saved = localStorage.getItem('onet_pro_save');
         if (saved) {
@@ -185,13 +183,17 @@
         const hasSave = loadFromDevice(); 
         document.body.style.backgroundImage = `url('${bgs[currentBgIndex]}')`;
         
-        if (localStorage.getItem('onet_ui_mode') === 'classic') {
+        // MẶC ĐỊNH CHỌN CLASSIC NẾU CHƯA CÓ CÀI ĐẶT
+        const uiMode = localStorage.getItem('onet_ui_mode') || 'classic';
+        if (uiMode === 'classic') {
             document.body.classList.add('classic');
+        } else {
+            document.body.classList.remove('classic');
         }
 
         if(hasSave && map.length > 0) {
             draw(); 
-            startTimer(); // Tiếp tục thời gian cũ
+            startTimer();
         } else {
             init();
         }
@@ -347,11 +349,16 @@
     function startTimer(){
         if(timer) clearInterval(timer);
         timer = setInterval(()=>{
-            time -= 0.15; // Tinh chỉnh tốc độ giảm
+            time -= 0.15;
             document.getElementById('timer-bar').style.width = time+"%";
-            if(time <= 15) saveToDevice(); // Lưu thường xuyên hơn khi sắp hết giờ
+            if(time <= 15) saveToDevice();
             if(time<=0){ clearInterval(timer); localStorage.removeItem('onet_pro_save'); alert("Hết giờ! Chơi lại nhé ní."); location.reload(); }
         },1000);
+    }
+
+    // Tự động kiểm tra UI mode ngay khi load script
+    if (localStorage.getItem('onet_ui_mode') === 'classic' || !localStorage.getItem('onet_ui_mode')) {
+        document.body.classList.add('classic');
     }
 </script>
 </body>
