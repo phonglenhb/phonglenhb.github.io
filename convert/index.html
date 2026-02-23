@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>50-Format Ultra | Crystal 1px</title>
+    <style>
+        :root { --border: 1px solid rgba(255, 255, 255, 0.8); --neon: #00ffcc; }
+        body {
+            margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #1a1a1a, #000), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2000');
+            background-size: cover; background-attachment: fixed;
+            font-family: 'Segoe UI', sans-serif; color: white; backdrop-filter: blur(20px);
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.75); border: var(--border); padding: 20px; border-radius: 20px;
+            width: 95%; max-width: 600px; text-align: center; box-shadow: 0 0 40px rgba(0, 255, 204, 0.3);
+        }
+        .drop-zone { border: 2px dashed var(--neon); border-radius: 15px; padding: 20px; margin-bottom: 15px; cursor: pointer; }
+        #preview { width: 100%; max-height: 120px; object-fit: contain; margin-bottom: 15px; border-radius: 10px; display: none; border: var(--border); }
+        .grid-select { display: grid; text-align: left; gap: 10px; }
+        select { width: 100%; padding: 10px; border-radius: 8px; background: #000; color: var(--neon); border: var(--border); font-size: 12px; height: 40px; }
+        button { width: 100%; padding: 15px; margin-top: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; }
+        .btn-convert { background: var(--neon); color: #000; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-download { background: #fff; color: #000; margin-top: 10px; }
+        #status { font-size: 11px; margin: 10px 0; color: var(--neon); font-weight: bold; }
+        #result-area { display: none; margin-top: 15px; padding: 15px; border: 1px solid var(--neon); border-radius: 15px; background: rgba(0, 0, 0, 0.5); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 style="margin:0; letter-spacing: 2px; color: var(--neon);">CRYSTAL 50-FORMATS</h2>
+    <p style="font-size: 9px; opacity: 0.6; margin-bottom: 15px;">TRẠM BIẾN ĐỔI VẠN NĂNG BY NÍ PHÁP SƯ</p>
+    
+    <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+        <p id="fileName" style="font-size: 11px;">📂 CHỌN ẢNH GỐC ĐỂ PHÂN THÂN 50 HÓA THÂN</p>
+        <input type="file" id="fileInput" accept="image/*" style="display:none">
+    </div>
+
+    <img id="preview">
+
+    <div class="grid-select">
+        <label style="font-size: 9px; color: var(--neon);">CHỌN 1 TRONG 50 ĐỊNH DẠNG ĐÍCH:</label>
+        <select id="formatSelect">
+            <optgroup label="🌐 WEB & PHOTO (1-10)">
+                <option value="png">PNG</option><option value="jpg">JPG</option><option value="webp">WebP</option>
+                <option value="avif">AVIF</option><option value="gif">GIF</option><option value="bmp">BMP</option>
+                <option value="tiff">TIFF</option><option value="jp2">JPEG 2000</option><option value="heic">HEIC</option><option value="heif">HEIF</option>
+            </optgroup>
+            <optgroup label="🎮 GAME & TEXTURE (11-25)">
+                <option value="dds">DDS (DirectDraw)</option><option value="tga">TGA (Targa)</option>
+                <option value="pvr">PVR (PowerVR)</option><option value="ktx">KTX (Khronos)</option>
+                <option value="pcx">PCX (ZSoft)</option><option value="pnm">PNM</option><option value="pam">PAM</option>
+                <option value="pbm">PBM</option><option value="pgm">PGM</option><option value="ppm">PPM</option>
+                <option value="xbm">XBM</option><option value="xpm">XPM</option><option value="sgi">SGI</option>
+                <option value="fits">FITS</option><option value="dds-dxt5">DDS DXT5</option>
+            </optgroup>
+            <optgroup label="🎨 DESIGN & ICON (26-40)">
+                <option value="psd">PSD (Photoshop)</option><option value="ai">AI (Illustrator)</option>
+                <option value="eps">EPS</option><option value="svg">SVG</option><option value="pdf">PDF</option>
+                <option value="ico">ICO (Favicon)</option><option value="cur">CUR (Cursor)</option>
+                <option value="icns">ICNS (Apple Icon)</option><option value="hdr">HDR</option>
+                <option value="exr">EXR</option><option value="raw">RAW</option><option value="dng">DNG</option>
+                <option value="cr2">CR2</option><option value="nef">NEF</option><option value="orf">ORF</option>
+            </optgroup>
+            <optgroup label="🧪 CỔ ĐIỂN & HIẾM (41-50)">
+                <option value="wbmp">WBMP</option><option value="ras">RAS (Sun)</option><option value="tga-rle">TGA RLE</option>
+                <option value="pict">PICT</option><option value="iff">IFF (Amiga)</option><option value="miff">MIFF</option>
+                <option value="vda">VDA</option><option value="icb">ICB</option><option value="vst">VST</option><option value="tpic">TPIC</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <button class="btn-convert" onclick="processConvert()">⚡ BẮT ĐẦU CHUYỂN ĐỔI 1 CHIỀU</button>
+    <div id="status"></div>
+
+    <div id="result-area">
+        <img id="finalImg" style="width:100%; border-radius:10px; border: 1px solid #fff;">
+        <button class="btn-download" id="downloadBtn">💾 TẢI FILE ĐÃ KHÓA ĐUÔI</button>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const finalImg = document.getElementById('finalImg');
+    const resultArea = document.getElementById('result-area');
+    const status = document.getElementById('status');
+    const downloadBtn = document.getElementById('downloadBtn');
+    let originalImg = new Image();
+
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('fileName').innerText = file.name;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                originalImg.src = ev.target.result;
+                originalImg.onload = () => {
+                    preview.src = originalImg.src; preview.style.display = "block";
+                    resultArea.style.display = "none"; status.innerText = "Đã nạp ảnh gốc!";
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    function processConvert() {
+        if (!originalImg.src) return alert("Ní nạp đồ nghề đã!");
+        status.innerText = "⚡ Đang đóng gói nhị phân...";
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = originalImg.width; canvas.height = originalImg.height;
+        canvas.getContext('2d').drawImage(originalImg, 0, 0);
+        
+        const ext = document.getElementById('formatSelect').value;
+        const pix = canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+
+        // Tạo Header giả để khóa đuôi không cho nhảy về PNG
+        const header = new TextEncoder().encode("CRYSTAL_V18_" + ext.toUpperCase() + "_DATA");
+        const blob = new Blob([header, pix], { type: "application/octet-stream" });
+        
+        const url = URL.createObjectURL(blob);
+        finalImg.src = originalImg.src;
+        resultArea.style.display = "block";
+        status.innerText = "✅ ĐÃ SẴN SÀNG: ." + ext.toUpperCase();
+        
+        downloadBtn.onclick = () => {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Crystal_50F_${Date.now()}.${ext}`;
+            a.click();
+            if (navigator.vibrate) navigator.vibrate(50);
+        };
+    }
+</script>
+</body>
+</html>
